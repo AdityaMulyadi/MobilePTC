@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white2">#DCCCCCCC</color>
+    <color name="bg1">#B861605F</color>
+    <color name="bg2">#C0000000</color>
+    <color name="btn">#006FFF</color>
+    <color name="btn_pres">#00BBFF</color>
+    <color name="kuning">#F6FF00</color>
+    <color name="hijau">#6BDD7C</color>
+    <color name="merah">#FF0000</color>
+    <color name="bgReg">#555555</color>
+</resources>
