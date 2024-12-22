@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobilePTC"
         tools:targetApi="31">
+        <service
+            android:name=".WeatherPredict"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".EditProfile"
             android:exported="false" />
