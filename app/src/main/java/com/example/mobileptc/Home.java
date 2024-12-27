@@ -1,12 +1,12 @@
 package com.example.mobileptc;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +31,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -53,7 +52,6 @@ import retrofit2.http.GET;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.tensorflow.lite.Interpreter;
-import org.w3c.dom.Text;
 
 
 public class Home extends AppCompatActivity {
@@ -70,7 +68,7 @@ public class Home extends AppCompatActivity {
         });
 
         ImageView cuaca1, cuaca2, cuaca3;
-        TextView suhu, txtkelembapan, txtkecAngin, curah, tanggal, cc, arahAngin, tglKalender, txtAlamat;
+        TextView suhu, txtkelembapan, txtkecAngin, curah, tanggal, cc, arahAngin, tglKalender, txtAlamat, txtRain, txtAppTemp;
         txtAlamat = findViewById(R.id.textView2);
         suhu = findViewById(R.id.textView4);
         txtkelembapan = findViewById(R.id.textView12);
@@ -83,6 +81,8 @@ public class Home extends AppCompatActivity {
         cc = findViewById(R.id.textViewf);
         arahAngin = findViewById(R.id.textViewh);
         tglKalender = findViewById(R.id.textView5);
+        txtRain = findViewById(R.id.textViewAppTemp);
+        txtAppTemp = findViewById(R.id.textViewRain);
 
         tanggal.setText(WaktuParepare("non"));
         tglKalender.setText(WaktuParepare("simpel"));
@@ -93,48 +93,206 @@ public class Home extends AppCompatActivity {
         OpenMeteoService service = retrofit.create(OpenMeteoService.class);
         Call<OpenMeteoResponse> call = service.getWeatherData();
 
+        final float[] currentTemp = new float[1];
+        float[] lembap = new float[1];
+        float[] kecepatanAngin = new float[1];
+        float[] curahHujan = new float[1];
+        float[] nilaiCC = new float[1];
+        float[] arahA = new float[1];
+        float[] apparentTemp = new float[1];
+        float[] rain = new float[1];
+
+//        MutableFloat data1 = new MutableFloat(lembap[0]);
+        MutableFloat data2 = new MutableFloat(kecepatanAngin[0]);
+//        MutableFloat data3 = new MutableFloat(curahHujan[0]);
+        MutableFloat data4 = new MutableFloat(nilaiCC[0]);
+        MutableFloat data5 = new MutableFloat(arahA[0]);
+        MutableFloat data6 = new MutableFloat(apparentTemp[0]);
+        MutableFloat data7 = new MutableFloat(rain[0]);
+
         call.enqueue(new Callback<OpenMeteoResponse>() {
             @Override
             public void onResponse(Call<OpenMeteoResponse> call, Response<OpenMeteoResponse> response) {
                 if (response.isSuccessful()) {
                     OpenMeteoResponse weatherData = response.body();
-                    double currentTemp = weatherData.currentWeather.temperature;
-                    String strTemp = currentTemp + "°C";
-                    double lembap = weatherData.currentWeather.kelembapan;
-                    String kelembapan = lembap + "%";
-                    double kecepatanAngin = weatherData.currentWeather.kecAngin;
-                    String kecAngin = kecepatanAngin + "km/h";
-                    double curahHujan = weatherData.currentWeather.curah;
-                    String strCurahHujan = curahHujan + "mm";
-                    double nilaiCC = weatherData.currentWeather.cloud_cover;
-                    String strCC = nilaiCC + "%";
-                    double arahA = weatherData.currentWeather.arah_angin;
-                    String strArahA = arahA + "°";
+                    assert weatherData != null;
+                    currentTemp[0] = (float) weatherData.currentWeather.temperature;
+                    String strTemp = currentTemp[0] + "°C";
+                    lembap[0] = (float) weatherData.currentWeather.kelembapan;
+                    String kelembapan = lembap[0] + "%";
+                    kecepatanAngin[0] = (float) weatherData.currentWeather.kecAngin;
+                    String kecAngin = kecepatanAngin[0] + "km/h";
+                    curahHujan[0] = (float) weatherData.currentWeather.curah;
+                    String strCurahHujan = curahHujan[0] + "mm";
+                    nilaiCC[0] = (float) weatherData.currentWeather.cloud_cover;
+                    String strCC = nilaiCC[0] + "%";
+                    arahA[0] = (float) weatherData.currentWeather.arah_angin;
+                    String strArahA = arahA[0] + "°";
+                    apparentTemp[0] = (float) weatherData.currentWeather.appTemp;
+                    rain[0] = (float) weatherData.currentWeather.rain;
+
+//                    data1.setValue(lembap[0]);
+                    data2.setValue(kecepatanAngin[0]);
+//                    data3.setValue(curahHujan[0]);
+                    data4.setValue(nilaiCC[0]);
+                    data5.setValue(arahA[0]);
+                    data6.setValue(apparentTemp[0]);
+                    data7.setValue(rain[0]);
 
                     arahAngin.setText(strArahA);
                     cc.setText(strCC);
-                    suhu.setText(strTemp);
                     txtkelembapan.setText(kelembapan);
                     txtkecAngin.setText(kecAngin);
                     curah.setText(strCurahHujan);
+                    txtRain.setText(rain[0] + "mm");
+                    txtAppTemp.setText(apparentTemp[0] + "°C");
 
                     int kodeCuaca = weatherData.currentWeather.kode_cuaca;
-                    if (kodeCuaca == 0) {
-                        cuaca1.setImageResource(R.drawable.sun);
-                    } else if (kodeCuaca <= 3) {
-                        cuaca1.setImageResource(R.drawable.cloudy);
-                    } else if (kodeCuaca == 45 || kodeCuaca == 48) {
-                        cuaca1.setImageResource(R.drawable.fog);
-                    } else if (kodeCuaca >= 51 && kodeCuaca <= 55) {
-                        cuaca1.setImageResource(R.drawable.drizzle);
-                    } else if (kodeCuaca >= 61 && kodeCuaca <= 65) {
-                        cuaca1.setImageResource(R.drawable.rainyday);
-                    } else if (kodeCuaca >= 80 && kodeCuaca <= 83) {
-                        cuaca1.setImageResource(R.drawable.shower);
-                    } else if (kodeCuaca >= 95 && kodeCuaca <= 99) {
-                        cuaca1.setImageResource(R.drawable.thunderstorm);
-                    }
+                    kondisiCuaca(kodeCuaca);
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DATA_JEMURAN");
+                    Query query = ref.orderByKey().endAt("2024-12-31_23:59:59").limitToLast(1);
+                    query.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                            if (snapshot.exists()) {
+                                float suhu, hum;
+                                suhu = snapshot.child("Suhu").getValue(Float.class);
+                                hum = snapshot.child("Kelembaban").getValue(Float.class);
+
+
+                                try {
+                                    float[][] hasilPrediksi = new float[12][];
+                                    int[] hasilKlasifikasi = new int[12];
+                                    for (int i = 0; i < 12; i++) {
+                                        float[] data = {suhu, hum, data6.getValue(), data7.getValue(), data4.getValue(), data2.getValue(), data5.getValue()};
+
+                                        float[][] prediksi = prediksiCuaca(data);
+                                        hasilPrediksi[i] = prediksi[0];
+
+                                        int klasifikasi = klasifikasiCuaca(DataScaler.scaleData2D(prediksi));
+                                        hasilKlasifikasi[i] = klasifikasi;
+
+                                        Log.d("Prediksi Iterasi " + i, "Prediksi: " + Arrays.toString(prediksi[0]) + ", Klasifikasi: " + klasifikasi);
+
+//                                        suhu = hasilPrediksi[i][0];
+//                                        hum = hasilPrediksi[i][1];
+//                                        data6.setValue(hasilPrediksi[i][2]);
+//                                        data7.setValue(hasilPrediksi[i][3]);
+//                                        data4.setValue(hasilPrediksi[i][4]);
+//                                        data2.setValue(hasilPrediksi[i][5]);
+//                                        data5.setValue(hasilPrediksi[i][6]);
+
+                                        suhu = prediksi[0][0];
+                                        hum = prediksi[0][1];
+                                        data6.setValue(prediksi[0][2]);
+                                        data7.setValue(prediksi[0][3]);
+                                        data4.setValue(prediksi[0][4]);
+                                        data2.setValue(prediksi[0][5]);
+                                        data5.setValue(prediksi[0][6]);
+
+                                    }
+
+                                    TableRow besok, besokLusa;
+                                    Intent intent = getIntent();
+                                    String nama, alamat, email, pass;
+                                    nama = intent.getStringExtra("nama");
+                                    alamat = intent.getStringExtra("alamat");
+                                    email = intent.getStringExtra("email");
+                                    pass = intent.getStringExtra("pass");
+                                    besok = findViewById(R.id.rowBesok);
+                                    besokLusa = findViewById(R.id.rowBesokLusa);
+
+                                    float finalSuhu = hasilPrediksi[0][0];
+                                    float finalHum = hasilPrediksi[0][1];
+                                    float finalappTemp = hasilPrediksi[0][2];
+                                    float finalRain = hasilPrediksi[0][3];
+                                    float finalCC = hasilPrediksi[0][4];
+                                    float finalWS = hasilPrediksi[0][5];
+                                    float finalWD = hasilPrediksi[0][6];
+                                    int finalWC = hasilKlasifikasi[0];
+
+                                    besok.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intent = new Intent(Home.this, Besok.class);
+                                            intent.putExtra("suhu", finalSuhu);
+                                            intent.putExtra("humidity", finalHum);
+                                            intent.putExtra("apparentTemp", finalappTemp);
+                                            intent.putExtra("rain", finalRain);
+                                            intent.putExtra("CC", finalCC);
+                                            intent.putExtra("WS", finalWS);
+                                            intent.putExtra("WD", finalWD);
+                                            intent.putExtra("nama", nama);
+                                            intent.putExtra("alamat", alamat);
+                                            intent.putExtra("email", email);
+                                            intent.putExtra("pass", pass);
+                                            intent.putExtra("WC", finalWC);
+                                            startActivity(intent);
+                                        }
+                                    });
+
+                                    float finalSuhu2 = hasilPrediksi[0][0];
+                                    float finalHum2 = hasilPrediksi[0][1];
+                                    float finalappTemp2 = hasilPrediksi[0][2];
+                                    float finalRain2 = hasilPrediksi[0][3];
+                                    float finalCC2 = hasilPrediksi[0][4];
+                                    float finalWS2 = hasilPrediksi[0][5];
+                                    float finalWD2 = hasilPrediksi[0][6];
+                                    int finalWC2 = hasilKlasifikasi[0];
+
+                                    besokLusa.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intent = new Intent(Home.this, BesokLusa.class);
+                                            intent.putExtra("suhu", finalSuhu2);
+                                            intent.putExtra("humidity", finalHum2);
+                                            intent.putExtra("apparentTemp", finalappTemp2);
+                                            intent.putExtra("rain", finalRain2);
+                                            intent.putExtra("CC", finalCC2);
+                                            intent.putExtra("WS", finalWS2);
+                                            intent.putExtra("WD", finalWD2);
+                                            intent.putExtra("nama", nama);
+                                            intent.putExtra("alamat", alamat);
+                                            intent.putExtra("email", email);
+                                            intent.putExtra("pass", pass);
+                                            intent.putExtra("WC", finalWC2);
+                                            startActivity(intent);
+                                        }
+                                    });
+
+                                    kondisiCuaca2(hasilKlasifikasi[0]);
+                                    kondisiCuaca3(hasilKlasifikasi[1]);
+
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
+
 
             }
 
@@ -147,48 +305,77 @@ public class Home extends AppCompatActivity {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DATA_JEMURAN");
         Query query = ref.orderByKey().endAt("2024-12-31_23:59:59").limitToLast(1);
-        TextView txtLux, dataStatus;
+        TextView txtLux, dataStatus, txtHum;
         ImageView ikonCuaca;
         ikonCuaca = findViewById(R.id.ikonHujan);
         txtLux = findViewById(R.id.dataIntensitasCahaya);
         dataStatus = findViewById(R.id.dataKondisiIot);
+        txtHum = findViewById(R.id.dataIoTHumidity);
+        final String[] status = new String[1];
+        final String[] dataLux = new String[1];
+        float[] temp = new float[1];
+        float[] hum = new float[1];
+        final Integer[] lux1 = new Integer[1];
+        final Integer[] lux2 = new Integer[1];
+        final Boolean[] cuaca = new Boolean[1];
+
+        MutableFloat data8 = new MutableFloat(temp[0]);
+        MutableFloat data9 = new MutableFloat(hum[0]);
 
         query.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                String status, dataLux;
-                Integer lux1, lux2;
-                Boolean cuaca;
 
                 if (snapshot.exists()) {
-                    lux1 = snapshot.child("Cahaya1").getValue(Integer.class);
-                    lux2 = snapshot.child("Cahaya2").getValue(Integer.class);
-                    status = snapshot.child("Status_Jemuran").getValue(String.class);
-                    cuaca = snapshot.child("Hujan").getValue(Boolean.class);
+                    lux1[0] = snapshot.child("Cahaya1").getValue(Integer.class);
+                    lux2[0] = snapshot.child("Cahaya2").getValue(Integer.class);
+                    status[0] = snapshot.child("Status_Jemuran").getValue(String.class);
+                    cuaca[0] = snapshot.child("Hujan").getValue(Boolean.class);
+                    temp[0] = snapshot.child("Suhu").getValue(Float.class);
+                    hum[0] = snapshot.child("Kelembaban").getValue(Float.class);
 
-                    if (lux1 != null && lux2 != null) {
-                        if (lux1 <= 1500 && lux2 <= 1500) {
-                            dataLux = "Terang";
-                            txtLux.setText(dataLux);
+                    data8.setValue(temp[0]);
+                    data9.setValue(hum[0]);
+
+                    Log.d("FirebaseData", "Temperature: " + temp[0] + ", Humidity: " + hum[0]);
+
+                    if (temp[0] > 0) {
+                        suhu.setText(temp[0] + "°C");
+
+                    } else {
+                        suhu.setText("N/A");
+                    }
+
+                    if (hum[0] > 0) {
+                        txtHum.setText(hum[0] + "%");
+                    } else {
+                        txtHum.setText("N/A");
+                    }
+
+
+                    if (lux1[0] != null && lux2[0] != null) {
+                        if (lux1[0] <= 3000 && lux2[0] <= 3000) {
+                            dataLux[0] = "Terang";
+                            txtLux.setText(dataLux[0]);
                         } else {
-                            dataLux = "Gelap";
-                            txtLux.setText(dataLux);
+                            dataLux[0] = "Gelap";
+                            txtLux.setText(dataLux[0]);
                         }
 
                     } else {
-                        dataLux = "N/A";
-                        txtLux.setText(dataLux);
+                        dataLux[0] = "N/A";
+                        txtLux.setText(dataLux[0]);
 
                     }
 
-                    if (status != null) {
-                        dataStatus.setText(status);
+                    if (status[0] != null) {
+                        dataStatus.setText(status[0]);
                     } else {
                         dataStatus.setText("N/A");
                     }
 
-                    if (cuaca != null) {
-                        if (cuaca) {
+                    if (cuaca[0] != null) {
+                        if (cuaca[0]) {
                             ikonCuaca.setImageResource(R.drawable.rainyday);
                         } else {
                             ikonCuaca.setImageResource(R.drawable.sun);
@@ -197,10 +384,12 @@ public class Home extends AppCompatActivity {
                         ikonCuaca.setImageResource(R.drawable.fog);
                     }
                 } else {
-                    dataLux = "N/A";
+                    dataLux[0] = "N/A";
                     dataStatus.setText("N/A");
                     ikonCuaca.setImageResource(R.drawable.fog);
-                    txtLux.setText(dataLux);
+                    txtLux.setText(dataLux[0]);
+                    suhu.setText("N/A");
+                    txtHum.setText("N/A");
                 }
             }
 
@@ -248,26 +437,12 @@ public class Home extends AppCompatActivity {
 
         controlIoT();
 
-        try {
-            TextView txt = findViewById(R.id.textView8);
-//            InputStream inputStream2 = getAssets().open("temp.txt");
-//            AssetFileDescriptor ast = getAssets().openFd("model_lstm.tflite");
-//            WeatherPredict weatherPredict = new WeatherPredict();
-//            PrediksiCuaca prediksiCuaca = new PrediksiCuaca("C:\\Users\\ASUS.LAPTOP-5901OKQB\\AndroidStudioProjects\\MobilePTC\\app\\src\\main\\assets\\model_lstmaftrepb.tflite");
-            float[] data = {26.3F, 91, 31.5F, 0.0F, 100, 9.4F, 94};
-            float[][] prediksi = prediksiCuaca(data);
-            int klasifikasi = klasifikasiCuaca(prediksi);
-            txt.setText(String.valueOf(klasifikasi));
-//            float[] prediksi = weatherPredict.prediksiCuaca(data);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
 
     }
 
     public float[][] prediksiCuaca (float[] inputData) throws IOException {
-        Interpreter interpreter = new Interpreter(loadModelFile("weather_prediction.tflite"));
+        Interpreter interpreter = new Interpreter(loadModelFile("weather_prediction(2.0).tflite"));
         DescriptiveStatistics stats = new DescriptiveStatistics();
         for (float value : inputData) {
             stats.addValue(value);
@@ -289,7 +464,7 @@ public class Home extends AppCompatActivity {
 //        for (float value : inputData) {
 //            byteBuffer.putFloat(value);
 //        }
-        byteBuffer.order(ByteOrder.nativeOrder());
+//        byteBuffer.order(ByteOrder.nativeOrder());
         for (float value : inputData) {
             byteBuffer.putFloat(value);
         }
@@ -303,19 +478,9 @@ public class Home extends AppCompatActivity {
 
     public int klasifikasiCuaca(float[][] inputData) throws IOException {
         Interpreter interpreter = new Interpreter(loadModelFile("weather_classification.tflite"));
-//        DescriptiveStatistics stats = new DescriptiveStatistics();
-//        for (float value : inputData[0]) {
-//            stats.addValue(value);
-//        }
-//        double min = stats.getMin();
-//        double max = stats.getMax();
-//
-//        for (int i = 0; i < inputData[0].length; i++) {
-//            inputData[0][i] = (float) scale(inputData[0][i], min, max);
-//        }
 
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(inputData[0].length * 4);
-        byteBuffer.order(ByteOrder.nativeOrder());
+//        byteBuffer.order(ByteOrder.nativeOrder());
         for (float value : inputData[0]) {
             byteBuffer.putFloat(value);
         }
@@ -373,6 +538,63 @@ public class Home extends AppCompatActivity {
             }
         }
         return reversedOutput;
+    }
+
+    void kondisiCuaca(int kodeCuaca) {
+        ImageView cuaca1 = findViewById(R.id.imageView4);
+        if (kodeCuaca == 0) {
+            cuaca1.setImageResource(R.drawable.sun);
+        } else if (kodeCuaca <= 3) {
+            cuaca1.setImageResource(R.drawable.cloudy);
+        } else if (kodeCuaca == 45 || kodeCuaca == 48) {
+            cuaca1.setImageResource(R.drawable.fog);
+        } else if (kodeCuaca >= 51 && kodeCuaca <= 55) {
+            cuaca1.setImageResource(R.drawable.drizzle);
+        } else if (kodeCuaca >= 61 && kodeCuaca <= 65) {
+            cuaca1.setImageResource(R.drawable.rainyday);
+        } else if (kodeCuaca >= 80 && kodeCuaca <= 83) {
+            cuaca1.setImageResource(R.drawable.shower);
+        } else if (kodeCuaca >= 95 && kodeCuaca <= 99) {
+            cuaca1.setImageResource(R.drawable.thunderstorm);
+        }
+    }
+
+    void kondisiCuaca2(int kodeCuaca) {
+        ImageView cuaca1 = findViewById(R.id.imageView5);
+        if (kodeCuaca == 0) {
+            cuaca1.setImageResource(R.drawable.sun);
+        } else if (kodeCuaca <= 3) {
+            cuaca1.setImageResource(R.drawable.cloudy);
+        } else if (kodeCuaca == 45 || kodeCuaca == 48) {
+            cuaca1.setImageResource(R.drawable.fog);
+        } else if (kodeCuaca >= 51 && kodeCuaca <= 55) {
+            cuaca1.setImageResource(R.drawable.drizzle);
+        } else if (kodeCuaca >= 61 && kodeCuaca <= 65) {
+            cuaca1.setImageResource(R.drawable.rainyday);
+        } else if (kodeCuaca >= 80 && kodeCuaca <= 83) {
+            cuaca1.setImageResource(R.drawable.shower);
+        } else if (kodeCuaca >= 95 && kodeCuaca <= 99) {
+            cuaca1.setImageResource(R.drawable.thunderstorm);
+        }
+    }
+
+    void kondisiCuaca3(int kodeCuaca) {
+        ImageView cuaca1 = findViewById(R.id.imageView6);
+        if (kodeCuaca == 0) {
+            cuaca1.setImageResource(R.drawable.sun);
+        } else if (kodeCuaca <= 3) {
+            cuaca1.setImageResource(R.drawable.cloudy);
+        } else if (kodeCuaca == 45 || kodeCuaca == 48) {
+            cuaca1.setImageResource(R.drawable.fog);
+        } else if (kodeCuaca >= 51 && kodeCuaca <= 55) {
+            cuaca1.setImageResource(R.drawable.drizzle);
+        } else if (kodeCuaca >= 61 && kodeCuaca <= 65) {
+            cuaca1.setImageResource(R.drawable.rainyday);
+        } else if (kodeCuaca >= 80 && kodeCuaca <= 83) {
+            cuaca1.setImageResource(R.drawable.shower);
+        } else if (kodeCuaca >= 95 && kodeCuaca <= 99) {
+            cuaca1.setImageResource(R.drawable.thunderstorm);
+        }
     }
 
     public interface OpenMeteoService {

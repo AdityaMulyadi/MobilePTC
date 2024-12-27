@@ -188,6 +188,7 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/rowBesok"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
@@ -224,6 +225,7 @@
 
 
                 <TableRow
+                    android:id="@+id/rowBesokLusa"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
@@ -274,19 +276,19 @@
 
             <TextView
                 android:id="@+id/textView11"
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:text="Detail Cuaca Hari Ini"
-                android:fontFamily="@font/poppinssemibold"
+                android:fontFamily="@font/poppinsbold"
                 android:textColor="@color/black"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="25dp"
-                android:textSize="18dp"
+                android:textSize="20dp"
                 android:textStyle="italic"
                 />
 
             <HorizontalScrollView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -450,6 +452,68 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/shape"
+                        android:padding="10dp"
+                        android:backgroundTint="@color/bg2"
+                        >
+
+                        <ImageView
+                            android:id="@+id/imageViewAppTemp"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            app:srcCompat="@drawable/hot"
+                            />
+
+                        <TextView
+                            android:id="@+id/textViewAppTemp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="14km/jam"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="15dp"
+                            android:textSize="20dp"
+                            android:fontFamily="@font/poppinssemibold"
+                            android:textColor="@color/white"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/shape"
+                        android:padding="10dp"
+                        android:backgroundTint="@color/bg2"
+                        >
+
+                        <ImageView
+                            android:id="@+id/imageViewRain"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            app:srcCompat="@drawable/rainyday"
+                            />
+
+                        <TextView
+                            android:id="@+id/textViewRain"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="14km/jam"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="15dp"
+                            android:textSize="20dp"
+                            android:fontFamily="@font/poppinssemibold"
+                            android:textColor="@color/white"
+                            />
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -471,11 +535,11 @@
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:text="Data dari perangkat IoT"
-                    android:fontFamily="@font/poppinssemibold"
+                    android:fontFamily="@font/poppinsbold"
                     android:textColor="@color/black"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="25dp"
-                    android:textSize="18dp"
+                    android:textSize="20dp"
                     android:textStyle="italic"
                     />
 
@@ -488,6 +552,37 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:background="@drawable/shape"
+                            android:padding="10dp"
+                            android:layout_marginLeft="20dp"
+                            android:backgroundTint="@color/bg2"
+                            >
+
+                            <ImageView
+                                android:id="@+id/ikonHumidity"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                app:srcCompat="@drawable/humidity"
+                                />
+
+                            <TextView
+                                android:id="@+id/dataIoTHumidity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="50%"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginTop="15dp"
+                                android:textSize="25dp"
+                                android:fontFamily="@font/poppinssemibold"
+                                android:textColor="@color/white"
+                                />
+
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
