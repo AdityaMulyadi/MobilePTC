@@ -81,8 +81,8 @@ public class Home extends AppCompatActivity {
         cc = findViewById(R.id.textViewf);
         arahAngin = findViewById(R.id.textViewh);
         tglKalender = findViewById(R.id.textView5);
-        txtRain = findViewById(R.id.textViewAppTemp);
-        txtAppTemp = findViewById(R.id.textViewRain);
+        txtRain = findViewById(R.id.textViewRain);
+        txtAppTemp = findViewById(R.id.textViewAppTemp);
 
         tanggal.setText(WaktuParepare("non"));
         tglKalender.setText(WaktuParepare("simpel"));
@@ -148,7 +148,8 @@ public class Home extends AppCompatActivity {
                     txtAppTemp.setText(apparentTemp[0] + "°C");
 
                     int kodeCuaca = weatherData.currentWeather.kode_cuaca;
-                    kondisiCuaca(kodeCuaca);
+                    ImageView img = findViewById(R.id.imageView4);
+                    kondisiCuaca(kodeCuaca, img);
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DATA_JEMURAN");
                     Query query = ref.orderByKey().endAt("2024-12-31_23:59:59").limitToLast(1);
@@ -261,8 +262,38 @@ public class Home extends AppCompatActivity {
                                         }
                                     });
 
-                                    kondisiCuaca2(hasilKlasifikasi[0]);
-                                    kondisiCuaca3(hasilKlasifikasi[1]);
+                                    ImageView img2, img3, img4, img5, img6, img7, img81, img91, img10, img11, img12, img13, img14, img15;
+                                    img2 = findViewById(R.id.imageView5);
+                                    img3 = findViewById(R.id.imageView6);
+                                    img4 = findViewById(R.id.imageViewPD1);
+                                    img5 = findViewById(R.id.imageViewPD2);
+                                    img6 = findViewById(R.id.imageViewPD3);
+                                    img7 = findViewById(R.id.imageViewPD4);
+                                    img81 = findViewById(R.id.imageViewPD5);
+                                    img91 = findViewById(R.id.imageViewPD6);
+                                    img10 = findViewById(R.id.imageViewPD7);
+                                    img11 = findViewById(R.id.imageViewPD8);
+                                    img12 = findViewById(R.id.imageViewPD9);
+                                    img13 = findViewById(R.id.imageViewPD10);
+                                    img14 = findViewById(R.id.imageViewPD11);
+                                    img15 = findViewById(R.id.imageViewPD12);
+
+                                    kondisiCuaca(hasilKlasifikasi[0], img2);
+                                    kondisiCuaca(hasilKlasifikasi[1], img3);
+
+                                    kondisiCuaca(hasilKlasifikasi[0], img4);
+                                    kondisiCuaca(hasilKlasifikasi[1], img5);
+                                    kondisiCuaca(hasilKlasifikasi[2], img6);
+                                    kondisiCuaca(hasilKlasifikasi[3], img7);
+                                    kondisiCuaca(hasilKlasifikasi[4], img81);
+                                    kondisiCuaca(hasilKlasifikasi[5], img91);
+                                    kondisiCuaca(hasilKlasifikasi[6], img10);
+                                    kondisiCuaca(hasilKlasifikasi[7], img11);
+                                    kondisiCuaca(hasilKlasifikasi[8], img12);
+                                    kondisiCuaca(hasilKlasifikasi[9], img13);
+                                    kondisiCuaca(hasilKlasifikasi[10], img14);
+                                    kondisiCuaca(hasilKlasifikasi[11], img15);
+
 
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
@@ -540,8 +571,7 @@ public class Home extends AppCompatActivity {
         return reversedOutput;
     }
 
-    void kondisiCuaca(int kodeCuaca) {
-        ImageView cuaca1 = findViewById(R.id.imageView4);
+    void kondisiCuaca(int kodeCuaca, ImageView cuaca1) {
         if (kodeCuaca == 0) {
             cuaca1.setImageResource(R.drawable.sun);
         } else if (kodeCuaca <= 3) {
@@ -559,43 +589,6 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    void kondisiCuaca2(int kodeCuaca) {
-        ImageView cuaca1 = findViewById(R.id.imageView5);
-        if (kodeCuaca == 0) {
-            cuaca1.setImageResource(R.drawable.sun);
-        } else if (kodeCuaca <= 3) {
-            cuaca1.setImageResource(R.drawable.cloudy);
-        } else if (kodeCuaca == 45 || kodeCuaca == 48) {
-            cuaca1.setImageResource(R.drawable.fog);
-        } else if (kodeCuaca >= 51 && kodeCuaca <= 55) {
-            cuaca1.setImageResource(R.drawable.drizzle);
-        } else if (kodeCuaca >= 61 && kodeCuaca <= 65) {
-            cuaca1.setImageResource(R.drawable.rainyday);
-        } else if (kodeCuaca >= 80 && kodeCuaca <= 83) {
-            cuaca1.setImageResource(R.drawable.shower);
-        } else if (kodeCuaca >= 95 && kodeCuaca <= 99) {
-            cuaca1.setImageResource(R.drawable.thunderstorm);
-        }
-    }
-
-    void kondisiCuaca3(int kodeCuaca) {
-        ImageView cuaca1 = findViewById(R.id.imageView6);
-        if (kodeCuaca == 0) {
-            cuaca1.setImageResource(R.drawable.sun);
-        } else if (kodeCuaca <= 3) {
-            cuaca1.setImageResource(R.drawable.cloudy);
-        } else if (kodeCuaca == 45 || kodeCuaca == 48) {
-            cuaca1.setImageResource(R.drawable.fog);
-        } else if (kodeCuaca >= 51 && kodeCuaca <= 55) {
-            cuaca1.setImageResource(R.drawable.drizzle);
-        } else if (kodeCuaca >= 61 && kodeCuaca <= 65) {
-            cuaca1.setImageResource(R.drawable.rainyday);
-        } else if (kodeCuaca >= 80 && kodeCuaca <= 83) {
-            cuaca1.setImageResource(R.drawable.shower);
-        } else if (kodeCuaca >= 95 && kodeCuaca <= 99) {
-            cuaca1.setImageResource(R.drawable.thunderstorm);
-        }
-    }
 
     public interface OpenMeteoService {
         @GET("v1/forecast?latitude=-4.04&longitude=119.627&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m")

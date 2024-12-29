@@ -25,6 +25,15 @@ public class Profile extends AppCompatActivity {
             return insets;
         });
 
+        ImageView logout = findViewById(R.id.imageViewLogout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, MainActivity.class));
+                finish();
+            }
+        });
+
         TextView txtNama, txtAlamat, txtEmail, txtPass;
         txtNama = findViewById(R.id.textView20);
         txtAlamat = findViewById(R.id.textView21);
